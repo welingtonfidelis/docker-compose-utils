@@ -91,6 +91,27 @@ services:
             compose-networks:
                 ipv4_address: 172.28.1.6
 
+    api-docs:
+        image: 'polinux/mkdocs'
+        container_name: api-docs
+        environment: 
+            ADD_MODULES: mkdocs-bootstrap mkdocs-gitbook mkdocs-bootstrap4
+            LIVE_RELOAD_SUPPORT: 'true'
+            FAST_MODE: 'true'
+            DOCS_DIRECTORY: /my_docs
+            GIT_REPO: https://github.com/welingtonfidelis/test-mkdoks.git
+            GIT_BRANCH: master
+            AUTO_UPDATE: 'true'
+            UPDATE_INTERVAL: '1'
+            DEV_ADDR: '0.0.0.0:9000'
+        ports:
+            - '9000:9000'
+        volumes:
+            - docker_data:/data/api-docs
+        networks:
+            compose-networks:
+                ipv4_address: 172.28.1.7
+
 networks: 
     compose-networks:
         ipam:
