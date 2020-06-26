@@ -1,0 +1,103 @@
+version: '3'
+
+services:
+    db-mongo:
+        image: mongo
+        container_name: mongo_db
+        environment: 
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+        ports:
+            - '27017:27017'
+        volumes:
+            - docker_data:/data/mongodb
+        networks:   
+            compose-networks:
+                ipv4_address: 172.28.1.1
+
+    db-nosqlclient:
+        image: mongoclient/mongoclient
+        container_name: mongoclient
+        ports:
+            - '27018:3000'
+        depends_on:
+            - db-mongo
+        networks:   
+            compose-networks:
+                ipv4_address: 172.28.1.2
+    
+    db-postgres:
+        image: 'postgres'
+        container_name: postgres_db
+        environment:
+            POSTGRES_DB: 'DEFAULT_DB'
+            POSTGRES_USER: 'root'
+            POSTGRES_PASSWORD: 'root'
+        ports:
+            - '5432:5432'
+        volumes:
+           - docker_data:/data/postgres
+        networks:
+            compose-networks:
+                ipv4_address: 172.28.1.3
+
+    db-pgadmin:
+        image: 'dpage/pgadmin4'
+        container_name: pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: 'user'
+            PGADMIN_DEFAULT_PASSWORD: 'user'
+        ports:
+            - '5433:80'
+        depends_on:
+            - db-postgres
+        networks:
+            compose-networks:
+                ipv4_address: 172.28.1.4
+
+    db-redis:
+        image: 'redis'
+        container_name: redis_db
+        command: redis-server --requirepass root
+        ports:
+            - '6379:6379'
+        volumes:
+            - docker_data:/data/redis
+        networks:
+            compose-networks:
+                ipv4_address: 172.28.1.5
+
+    server:
+        container_name: api-docker-test
+        build: '.'
+        volumes:
+            - ./:/node-app
+            - ./node_modules:/node-app/node_modules
+        environment:
+            NODE_ENV: development
+        depends_on:
+            - db-mongo
+            - db-postgres
+            - db-redis
+        links:
+            - db-mongo
+            - db-postgres
+            - db-redis
+        ports:
+            - '3001:3001'
+        volumes:
+            - docker_data:/data/api-server
+        networks:
+            compose-networks:
+                ipv4_address: 172.28.1.6
+
+networks: 
+    compose-networks:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.28.0.0/16
+
+volumes:
+    docker_data:
+        driver: local
