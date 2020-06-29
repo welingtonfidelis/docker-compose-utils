@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/test', (req, res) => {
-    res.send({response: 'Hello World'});
+    res.send({response: 'Hello World', code: 200});
 });
 
 app.listen(process.env.PORT || port, function () {
