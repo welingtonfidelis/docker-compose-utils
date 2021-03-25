@@ -1,0 +1,20 @@
+    {
+        "connections": [
+            {
+                "label": "LOCAL",
+                "host": "172.28.1.5",
+                "port": 6379,
+                "password": "root",
+                "dbIndex": 0
+            },
+            // tls example
+            {
+                "label": "PROD",
+                "port": "6380",
+                "password": "aaaaaa",
+                "dbIndex": 0,
+                "host": "192.168.0.1",
+                "tls": true
+            },
+        ]
+    }
