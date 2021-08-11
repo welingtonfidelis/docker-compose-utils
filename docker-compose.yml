@@ -150,22 +150,26 @@ services:
     #         compose-networks:
     #             ipv4_address: 172.28.1.7
     
-    db:
+    db-mysql:
         image: mysql:5.7
         restart: always
         environment:
-          MYSQL_DATABASE: "mysql_docker"
           MYSQL_USER: "user"
           MYSQL_PASSWORD: "root"
           MYSQL_ROOT_PASSWORD: "root"
         ports:
           - "3306:3306"
-        expose:
-          - "3306"
         volumes:
-          - my-db:/var/lib/mysql
-    volumes:
-      my-db:
+          - docker_data:/data/mysql
+        networks:
+            compose-networks:
+                ipv4_address: 172.28.1.8
+        deploy:
+            resources:
+                limits:
+                    memory: 512M
+                reservations:
+                    memory: 256M
 
 networks: 
     compose-networks:
